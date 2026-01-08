@@ -1,15 +1,22 @@
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from "expo-router";
 
 export default function Index() {
+  const router = useRouter();
+
+  const setStorage = async (location: string) => {
+    await AsyncStorage.setItem('location', location);
+    router.replace({
+      pathname: '/app',
+      params: { location },
+    });
+  }
+
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View>
+      <Text>Select your Location</Text>
+      <Button title="Karlsruhe" onPress={() => setStorage("KA")} />
     </View>
   );
 }
