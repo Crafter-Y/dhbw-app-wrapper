@@ -8,6 +8,7 @@ export default function Index() {
         style={{
           flex: 1,
         }}
+        testID="browser"
         source={{ uri: `https://dhbw.app` }}
       />
     </SafeAreaView>
