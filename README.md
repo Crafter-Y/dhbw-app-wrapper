@@ -1,50 +1,67 @@
-# Welcome to your Expo app 👋
+<p align="center">
+  <img src="./assets/images/icon.png" alt="DHBW App Wrapper Icon" width="150" />
+</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# DHBW App Wrapper
 
-## Get started
+**Unofficial wrapper application for [dhbw.app](https://dhbw.app)**
 
-1. Install dependencies
+> ⚠️ **Disclaimer**: This is an unofficial, community-maintained application and is not affiliated with, endorsed by, or officially connected to DHBW or dhbw.app in any way.
+
+## About
+
+This is a simple React Native wrapper application that embeds the [dhbw.app](https://dhbw.app) website in a WebView. It provides a native mobile app experience for iOS and Android platforms.
+
+## Local Development
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) - Fast JavaScript runtime and package manager
+- [Expo CLI](https://docs.expo.dev/get-started/installation/)
+- For iOS development: macOS with Xcode
+- For Android development: Android Studio with Android SDK
+
+### Getting Started
+
+1. **Install dependencies**
 
    ```bash
-   npm install
+   bun install
    ```
 
-2. Start the app
+2. **Start the development server**
 
    ```bash
-   npx expo start
+   bun start
    ```
 
-In the output, you'll find options to open the app in a
+3. **Run on a device**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   - Scan the QR code with the Expo Go app (iOS/Android)
+   - Or press `a` for Android emulator
+   - Or press `i` for iOS simulator
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Additional Commands
 
 ```bash
-npm run reset-project
+bun run android  # Start Android emulator
+bun run ios      # Start iOS simulator
+bun run lint     # Run ESLint
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Links
 
-## Learn more
+- [dhbw.app](https://dhbw.app) - The official website
+- [Report Issues](https://github.com/Crafter-Y/dhbw-app-wrapper/issues)
 
-To learn more about developing your project with Expo, look at the following resources:
+## License
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+CC BY 4.0
 
-## Join the community
+dhbw-app-wrapper (c) by Crafter-Y
 
-Join our community of developers creating universal apps.
+dhbw-app-wrapper is licensed under a
+Creative Commons Attribution 4.0 International License.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+You should have received a copy of the license along with this
+work. If not, see <https://creativecommons.org/licenses/by/4.0/>.
