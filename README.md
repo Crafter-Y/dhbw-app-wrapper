@@ -17,9 +17,7 @@ This is a simple React Native wrapper application that embeds the [dhbw.app](htt
 ### Prerequisites
 
 - [Bun](https://bun.sh/) - Fast JavaScript runtime and package manager
-- [Expo CLI](https://docs.expo.dev/get-started/installation/)
-- For iOS development: macOS with Xcode
-- For Android development: Android Studio with Android SDK
+- [EAS CLI](https://docs.expo.dev/build/setup/) - For creating development builds
 
 ### Getting Started
 
@@ -29,23 +27,36 @@ This is a simple React Native wrapper application that embeds the [dhbw.app](htt
    bun install
    ```
 
-2. **Start the development server**
+2. **Create a development build**
 
    ```bash
-   bun start
+   eas build -p android --profile development
    ```
 
-3. **Run on a device**
+   Install the generated build on your device. For iOS, use the same development
+   profile with the iOS platform:
 
-   - Scan the QR code with the Expo Go app (iOS/Android)
-   - Or press `a` for Android emulator
-   - Or press `i` for iOS simulator
+   ```bash
+   eas build -p ios --profile development
+   ```
+
+3. **Start Metro for the development client**
+
+   ```bash
+   bun run start
+   ```
+
+4. **Open the app**
+
+   Launch the installed development build on your device and connect it to the
+   Metro server.
 
 ### Additional Commands
 
 ```bash
-bun run android  # Start Android emulator
-bun run ios      # Start iOS simulator
+bun run start    # Start the Expo development server
+bun run android  # Build and run Android locally
+bun run ios      # Build and run iOS locally
 bun run lint     # Run ESLint
 ```
 
