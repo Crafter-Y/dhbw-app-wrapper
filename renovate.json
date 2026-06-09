@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "description": "Let Expo CLI manage SDK-coupled packages.",
+      "matchPackageNames": [
+        "/^@expo\\//",
+        "/^expo($|-)/",
+        "react",
+        "react-dom",
+        "react-native",
+        "/^react-native-/",
+        "@types/react",
+        "@types/react-dom",
+        "typescript",
+        "eslint-config-expo"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Group regular non-Expo dependency updates.",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "groupName": "non-Expo dependencies"
+    }
+  ]
+}

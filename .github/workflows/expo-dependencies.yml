@@ -1,0 +1,148 @@
+name: Expo Dependencies
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Update Expo SDK dependencies
+        run: |
+          set -o pipefail
+          {
+            bunx expo install expo@latest
+            bunx expo install --fix
+          } | tee "$RUNNER_TEMP/expo-update.log"
+
+      - name: Keep Expo SDK range pinned
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const packageJsonPath = "package.json";
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+          const expoVersion = packageJson.dependencies?.expo;
+
+          if (typeof expoVersion === "string") {
+            packageJson.dependencies.expo = `~${expoVersion.replace(/^[~^]/, "")}`;
+            fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+          }
+          NODE
+
+      - name: Refresh lockfile
+        run: bun install
+
+      - name: Build pull request body
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const { execFileSync } = require("child_process");
+
+          const current = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const previous = JSON.parse(execFileSync("git", ["show", "HEAD:package.json"], { encoding: "utf8" }));
+
+          const sections = ["dependencies", "devDependencies"];
+          const updates = [];
+
+          for (const section of sections) {
+            const before = previous[section] ?? {};
+            const after = current[section] ?? {};
+            const packages = new Set([...Object.keys(before), ...Object.keys(after)]);
+
+            for (const name of [...packages].sort()) {
+              if (before[name] !== after[name]) {
+                updates.push({
+                  name,
+                  section,
+                  before: before[name] ?? "-",
+                  after: after[name] ?? "-"
+                });
+              }
+            }
+          }
+
+          const changedFiles = execFileSync("git", ["diff", "--name-only"], { encoding: "utf8" })
+            .trim()
+            .split("\n")
+            .filter(Boolean);
+
+          const lines = [
+            "Updates the Expo SDK and Expo-managed dependencies using:",
+            "",
+            "```bash",
+            "bunx expo install expo@latest",
+            "bunx expo install --fix",
+            "```",
+            "",
+            "## Updated packages",
+            ""
+          ];
+
+          if (updates.length === 0) {
+            lines.push("No package.json dependency version changes detected.");
+          } else {
+            lines.push("| Package | Scope | From | To |");
+            lines.push("| --- | --- | --- | --- |");
+            for (const update of updates) {
+              lines.push(`| \`${update.name}\` | \`${update.section}\` | \`${update.before}\` | \`${update.after}\` |`);
+            }
+          }
+
+          lines.push("", "## Changed files", "");
+
+          if (changedFiles.length === 0) {
+            lines.push("No files changed.");
+          } else {
+            for (const file of changedFiles) {
+              lines.push(`- \`${file}\``);
+            }
+          }
+
+          fs.writeFileSync(`${process.env.RUNNER_TEMP}/expo-update-pr-body.md`, `${lines.join("\n")}\n`);
+          NODE
+
+      - name: Check pull request token
+        env:
+          DEPENDENCY_UPDATE_TOKEN: ${{ secrets.DEPENDENCY_UPDATE_TOKEN }}
+        run: |
+          if [ -z "$DEPENDENCY_UPDATE_TOKEN" ]; then
+            echo "::error::Set DEPENDENCY_UPDATE_TOKEN to a PAT so PR workflows run automatically."
+            exit 1
+          fi
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.DEPENDENCY_UPDATE_TOKEN }}
+          branch: chore/expo-dependency-update
+          delete-branch: true
+          commit-message: "chore: update expo dependencies"
+          title: "chore: update Expo dependencies"
+          body-path: ${{ runner.temp }}/expo-update-pr-body.md
+          labels: dependencies, expo
