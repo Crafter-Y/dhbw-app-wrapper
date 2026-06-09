@@ -5,7 +5,7 @@
   "rangeStrategy": "bump",
   "packageRules": [
     {
-      "description": "Let Expo CLI manage SDK-coupled packages.",
+      "description": "Let Expo CLI manage SDK-coupled packages",
       "matchPackageNames": [
         "/^@expo\\//",
         "/^expo($|-)/",
@@ -21,7 +21,7 @@
       "enabled": false
     },
     {
-      "description": "Group regular non-Expo dependency updates.",
+      "description": "Group regular non-Expo dependency updates",
       "matchManagers": ["npm"],
       "matchDepTypes": ["dependencies", "devDependencies"],
       "groupName": "non-Expo dependencies"
